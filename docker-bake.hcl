@@ -65,6 +65,22 @@ variable "PLUGIN_CLI_VERSION" {
   default = "2.11.0"
 }
 
+variable "JENKINS_USER" {
+  default = "jenkins"
+}
+
+variable "JENKINS_GROUP" {
+  default = "jenkins"
+}
+
+variable "JENKINS_UID" {
+  default = "1000"
+}
+
+variable "JENKINS_GID" {
+  default = "1000"
+}
+
 target "almalinux_jdk11" {
   dockerfile = "11/almalinux/almalinux8/hotspot/Dockerfile"
   context = "."
@@ -179,6 +195,10 @@ target "debian_jdk11" {
     JENKINS_SHA = JENKINS_SHA
     GIT_LFS_VERSION = GIT_LFS_VERSION
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     "${REGISTRY}/${JENKINS_REPO}:${JENKINS_VERSION}",
