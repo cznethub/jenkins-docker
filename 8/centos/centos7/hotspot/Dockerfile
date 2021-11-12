@@ -3,6 +3,7 @@ FROM centos:centos7.9.2009
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 ARG TARGETARCH
+ARG COMMIT_SHA
 
 RUN echo -e '[AdoptOpenJDK]\n\
 name=AdoptOpenJDK\n\
@@ -14,7 +15,8 @@ gpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public' > /etc/yum
     yum clean all
 
 ARG TARGETARCH
-ARG GIT_LFS_VERSION=3.0.1
+ARG COMMIT_SHA
+ARG GIT_LFS_VERSION=3.0.2
 
 # required for multi-arch support, revert to package cloud after:
 # https://github.com/git-lfs/git-lfs/issues/4546
@@ -122,4 +124,5 @@ LABEL \
     org.opencontainers.image.version="${JENKINS_VERSION}" \
     org.opencontainers.image.url="https://www.jenkins.io/" \
     org.opencontainers.image.source="https://github.com/jenkinsci/docker" \
+    org.opencontainers.image.revision="${COMMIT_SHA}" \
     org.opencontainers.image.licenses="MIT"

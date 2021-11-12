@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11.0.12_7-jdk-focal as jre-build
+FROM eclipse-temurin:11.0.13_8-jdk-focal as jre-build
 
 RUN jlink \
          --add-modules ALL-MODULE-PATH \
@@ -6,7 +6,7 @@ RUN jlink \
          --compress=2 \
          --output /javaruntime
 
-FROM debian:bullseye-20210927
+FROM debian:bullseye-20211011
 
 RUN apt-get update && \
     apt-get install -y git curl gpg unzip libfreetype6 libfontconfig1 && \
@@ -15,7 +15,8 @@ RUN apt-get update && \
 ENV LANG C.UTF-8
 
 ARG TARGETARCH
-ARG GIT_LFS_VERSION=3.0.1
+ARG COMMIT_SHA
+ARG GIT_LFS_VERSION=3.0.2
 
 # required for multi-arch support, revert to package cloud after:
 # https://github.com/git-lfs/git-lfs/issues/4546
@@ -127,4 +128,5 @@ LABEL \
     org.opencontainers.image.version="${JENKINS_VERSION}" \
     org.opencontainers.image.url="https://www.jenkins.io/" \
     org.opencontainers.image.source="https://github.com/jenkinsci/docker" \
+    org.opencontainers.image.revision="${COMMIT_SHA}" \
     org.opencontainers.image.licenses="MIT"

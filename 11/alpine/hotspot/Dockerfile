@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.12_7-alpine AS jre-build
+FROM adoptopenjdk/openjdk11:jdk-11.0.13_8-alpine AS jre-build
 
 # Generate smaller java runtime without unneeded files
 # for now we include the full module path to maintain compatibility
@@ -28,7 +28,8 @@ RUN apk add --no-cache \
 ENV LANG C.UTF-8
 
 ARG TARGETARCH
-ARG GIT_LFS_VERSION=3.0.1
+ARG COMMIT_SHA
+ARG GIT_LFS_VERSION=3.0.2
 
 # required for multi-arch support, revert to package cloud after:
 # https://github.com/git-lfs/git-lfs/issues/4546
@@ -166,4 +167,5 @@ LABEL \
     org.opencontainers.image.version="${JENKINS_VERSION}" \
     org.opencontainers.image.url="https://www.jenkins.io/" \
     org.opencontainers.image.source="https://github.com/jenkinsci/docker" \
+    org.opencontainers.image.revision="${COMMIT_SHA}" \
     org.opencontainers.image.licenses="MIT"
