@@ -80,6 +80,22 @@ variable "PLUGIN_CLI_VERSION" {
   default = "2.13.0"
 }
 
+variable "JENKINS_USER" {
+  default = "jenkins"
+}
+
+variable "JENKINS_GROUP" {
+  default = "jenkins"
+}
+
+variable "JENKINS_UID" {
+  default = "1000"
+}
+
+variable "JENKINS_GID" {
+  default = "1000"
+}
+
 variable "COMMIT_SHA" {
   default = ""
 }
@@ -145,6 +161,10 @@ target "almalinux_jdk11" {
     COMMIT_SHA         = COMMIT_SHA
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     JAVA_VERSION       = JAVA11_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "almalinux"),
@@ -164,6 +184,10 @@ target "alpine_jdk11" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     ALPINE_TAG         = ALPINE_FULL_TAG
     JAVA_VERSION       = JAVA11_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "alpine-jdk11"),
@@ -184,6 +208,10 @@ target "alpine_jdk17" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     ALPINE_TAG         = ALPINE_FULL_TAG
     JAVA_VERSION       = JAVA17_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "alpine"),
@@ -208,6 +236,10 @@ target "alpine_jdk21" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     ALPINE_TAG         = ALPINE_FULL_TAG
     JAVA_VERSION       = JAVA21_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "alpine-jdk21"),
@@ -228,6 +260,10 @@ target "debian_jdk11" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     BOOKWORM_TAG       = BOOKWORM_TAG
     JAVA_VERSION       = JAVA11_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "jdk11"),
@@ -249,6 +285,10 @@ target "debian_jdk17" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     BOOKWORM_TAG       = BOOKWORM_TAG
     JAVA_VERSION       = JAVA17_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, ""),
@@ -274,6 +314,10 @@ target "debian_jdk21" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     BOOKWORM_TAG       = BOOKWORM_TAG
     JAVA_VERSION       = JAVA21_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "jdk21"),
@@ -295,6 +339,10 @@ target "debian_slim_jdk11" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     BOOKWORM_TAG       = BOOKWORM_TAG
     JAVA_VERSION       = JAVA11_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "slim-jdk11"),
@@ -314,6 +362,10 @@ target "debian_slim_jdk17" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     BOOKWORM_TAG       = BOOKWORM_TAG
     JAVA_VERSION       = JAVA17_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "slim"),
@@ -337,6 +389,10 @@ target "debian_slim_jdk21" {
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     BOOKWORM_TAG       = BOOKWORM_TAG
     JAVA_VERSION       = JAVA21_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "slim-jdk21"),
@@ -355,6 +411,10 @@ target "rhel_ubi8_jdk11" {
     COMMIT_SHA         = COMMIT_SHA
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     JAVA_VERSION       = JAVA11_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "rhel-ubi8-jdk11"),
@@ -374,6 +434,10 @@ target "rhel_ubi9_jdk17" {
     COMMIT_SHA         = COMMIT_SHA
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     JAVA_VERSION       = JAVA17_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "rhel-ubi9-jdk17"),
@@ -393,6 +457,10 @@ target "rhel_ubi9_jdk21" {
     COMMIT_SHA         = COMMIT_SHA
     PLUGIN_CLI_VERSION = PLUGIN_CLI_VERSION
     JAVA_VERSION       = JAVA21_VERSION
+    user = JENKINS_USER
+    group = JENKINS_GROUP
+    uid = JENKINS_UID
+    gid = JENKINS_GID
   }
   tags = [
     tag(true, "rhel-ubi9-jdk21"),
