@@ -5,7 +5,7 @@ updates:
 # Alpine Linux
 
 - package-ecosystem: docker
-  directory: "11/alpine/hotspot"
+  directory: "alpine/hotspot"
   schedule:
     interval: weekly
   open-pull-requests-limit: 2
@@ -15,23 +15,14 @@ updates:
   - slide
   labels:
   - dependencies
-
-- package-ecosystem: docker
-  directory: "8/alpine/hotspot"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 2
-  target-branch: master
-  reviewers:
-  - MarkEWaite
-  - slide
-  labels:
-  - dependencies
+  ignore:
+  # Ignore proposals to update to new versions of Java because updatecli takes care of that.
+  - dependency-name: "eclipse-temurin"
 
 # AlmaLinux
 
 - package-ecosystem: docker
-  directory: "11/almalinux/almalinux8/hotspot"
+  directory: "almalinux/almalinux8/hotspot"
   schedule:
     interval: weekly
   open-pull-requests-limit: 2
@@ -41,24 +32,17 @@ updates:
   - slide
   labels:
   - dependencies
-
-# CentOS Linux
-
-- package-ecosystem: docker
-  directory: "8/centos/centos7/hotspot"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 2
-  target-branch: master
-  reviewers:
-  - slide
-  labels:
-  - dependencies
+  ignore:
+  # Ignore proposals to update to new versions of Java because updatecli takes care of that.
+  - dependency-name: "eclipse-temurin"
+  # Ignore proposals to update to Alma Linux 9 or later
+  - dependency-name: "almalinux"
+    update-types: ["version-update:semver-major"]
 
 # Debian Linux
 
 - package-ecosystem: docker
-  directory: "11/debian/bullseye/hotspot"
+  directory: "debian/bookworm/hotspot"
   schedule:
     interval: weekly
   open-pull-requests-limit: 2
@@ -68,9 +52,12 @@ updates:
   - slide
   labels:
   - dependencies
+  ignore:
+  # Ignore proposals to update to new versions of Java because updatecli takes care of that.
+  - dependency-name: "eclipse-temurin"
 
 - package-ecosystem: docker
-  directory: "11/debian/bullseye-slim/hotspot"
+  directory: "debian/bookworm-slim/hotspot"
   schedule:
     interval: weekly
   open-pull-requests-limit: 2
@@ -80,35 +67,14 @@ updates:
   - slide
   labels:
   - dependencies
-
-- package-ecosystem: docker
-  directory: "8/debian/bullseye/hotspot"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 2
-  target-branch: master
-  reviewers:
-  - MarkEWaite
-  - slide
-  labels:
-  - dependencies
-
-- package-ecosystem: docker
-  directory: "8/debian/bullseye-slim/hotspot"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 2
-  target-branch: master
-  reviewers:
-  - MarkEWaite
-  - slide
-  labels:
-  - dependencies
+  ignore:
+  # Ignore proposals to update to new versions of Java because updatecli takes care of that.
+  - dependency-name: "eclipse-temurin"
 
 # RHEL UBI
 
 - package-ecosystem: docker
-  directory: "11/rhel/ubi8/hotspot"
+  directory: "rhel/ubi8/hotspot"
   schedule:
     interval: weekly
   open-pull-requests-limit: 2
@@ -118,16 +84,30 @@ updates:
     - slide
   labels:
     - dependencies
-
-# Windows
+  ignore:
+  # Ignore proposals to update to new versions of Java because updatecli takes care of that.
+  - dependency-name: "eclipse-temurin"
 
 - package-ecosystem: docker
-  directory: "11/windows/windowsservercore-2019/hotspot"
+  directory: "rhel/ubi9/hotspot"
   schedule:
     interval: weekly
   open-pull-requests-limit: 2
   target-branch: master
   reviewers:
-  - slide
+    - olivergondza
+    - slide
   labels:
-  - dependencies
+    - dependencies
+  ignore:
+  # Ignore proposals to update to new versions of Java because updatecli takes care of that.
+  - dependency-name: "eclipse-temurin"
+
+# GitHub actions
+
+- package-ecosystem: "github-actions"
+  target-branch: master
+  directory: "/"
+  schedule:
+    # Check for updates to GitHub Actions every week
+    interval: "weekly"

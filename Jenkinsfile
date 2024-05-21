@@ -13,54 +13,64 @@ properties(listOfProperties)
 
 stage('Build') {
     def builds = [:]
-    builds['windows'] = {
-        nodeWithTimeout('docker-windows') {
-            stage('Checkout') {
-                checkout scm
-            }
-
-            if (!infra.isTrusted()) {
-
-                /* Outside of the trusted.ci environment, we're building and testing
-                * the Dockerfile in this repository, but not publishing to docker hub
-                */
-                stage('Build') {
-                    infra.withDockerCredentials {
-                        powershell './make.ps1'
-                    }
+    def windowsImageTypes = [
+        'windowsservercore-ltsc2019',
+    ]
+    for (anImageType in windowsImageTypes) {
+        def imageType = anImageType
+        builds[imageType] = {
+            nodeWithTimeout('windows-2019') {
+                stage('Checkout') {
+                    checkout scm
                 }
 
-                stage('Test') {
-                    infra.withDockerCredentials {
-                        def windowsTestStatus = powershell(script: './make.ps1 test', returnStatus: true)
-                        junit(allowEmptyResults: true, keepLongStdio: true, testResults: 'target/**/junit-results.xml')
-                        if (windowsTestStatus > 0) {
-                            // If something bad happened let's clean up the docker images
-                            error('Windows test stage failed.')
+                withEnv(["IMAGE_TYPE=${imageType}"]) {
+                    if (!infra.isTrusted()) {
+                        /* Outside of the trusted.ci environment, we're building and testing
+                        * the Dockerfile in this repository, but not publishing to docker hub
+                        */
+                        stage("Build ${imageType}") {
+                            infra.withDockerCredentials {
+                                powershell './make.ps1'
+                            }
                         }
-                    }
-                }
 
-                // disable until we get the parallel changes merged in
-                //def branchName = "${env.BRANCH_NAME}"
-                //if (branchName ==~ 'master'){
-                //    stage('Publish Experimental') {
-                //        infra.withDockerCredentials {
-                //            withEnv(['DOCKERHUB_ORGANISATION=jenkins4eval','DOCKERHUB_REPO=jenkins']) {
-                //                powershell './make.ps1 publish'
-                //            }
-                //        }
-                //    }
-                //}
+                        stage("Test ${imageType}") {
+                            infra.withDockerCredentials {
+                                def windowsTestStatus = powershell(script: './make.ps1 test', returnStatus: true)
+                                junit(allowEmptyResults: true, keepLongStdio: true, testResults: 'target/**/junit-results.xml')
+                                if (windowsTestStatus > 0) {
+                                    // If something bad happened let's clean up the docker images
+                                    error('Windows test stage failed.')
+                                }
+                            }
+                        }
 
-            } else {
-                /* In our trusted.ci environment we only want to be publishing our
-                * containers from artifacts
-                */
-                stage('Publish') {
-                    infra.withDockerCredentials {
-                        withEnv(['DOCKERHUB_ORGANISATION=jenkins','DOCKERHUB_REPO=jenkins']) {
-                            powershell './make.ps1 publish'
+                        // disable until we get the parallel changes merged in
+                        // def branchName = "${env.BRANCH_NAME}"
+                        // if (branchName ==~ 'master'){
+                        //    stage('Publish Experimental') {
+                        //        infra.withDockerCredentials {
+                        //            withEnv(['DOCKERHUB_ORGANISATION=jenkins4eval','DOCKERHUB_REPO=jenkins']) {
+                        //                powershell './make.ps1 publish'
+                        //            }
+                        //        }
+                        //    }
+                        // }
+                    } else {
+                        // Only publish when a tag triggered the build
+                        if (env.TAG_NAME) {
+                            // Split to ensure any suffix is not taken in account (but allow suffix tags to trigger rebuilds)
+                            jenkins_version = env.TAG_NAME.split('-')[0]
+                            withEnv(["JENKINS_VERSION=${jenkins_version}"]) {
+                                stage('Publish') {
+                                    infra.withDockerCredentials {
+                                        withEnv(['DOCKERHUB_ORGANISATION=jenkins','DOCKERHUB_REPO=jenkins']) {
+                                            powershell './make.ps1 publish'
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -72,15 +82,17 @@ stage('Build') {
         def images = [
                 'almalinux_jdk11',
                 'alpine_jdk11',
-                'alpine_jdk8',
-                'centos7_jdk11',
-                'centos7_jdk8',
-                'debian_jdk8',
+                'alpine_jdk17',
+                'alpine_jdk21',
                 'debian_jdk11',
                 'debian_jdk17',
+                'debian_jdk21',
                 'debian_slim_jdk11',
-                'debian_slim_jdk8',
+                'debian_slim_jdk17',
+                'debian_slim_jdk21',
                 'rhel_ubi8_jdk11',
+                'rhel_ubi9_jdk17',
+                'rhel_ubi9_jdk21',
         ]
         for (i in images) {
             def imageToBuild = i
@@ -93,8 +105,8 @@ stage('Build') {
                         checkout scm
                     }
 
-                    stage('shellcheck') {
-                        sh 'make shellcheck'
+                    stage('Static analysis') {
+                        sh 'make hadolint shellcheck'
                     }
 
                     /* Outside of the trusted.ci environment, we're building and testing
@@ -141,19 +153,26 @@ stage('Build') {
             }
         }
     } else {
-        builds['linux'] = {
-            nodeWithTimeout('docker') {
-                stage('Checkout') {
-                    checkout scm
-                }
+        // Only publish when a tag triggered the build
+        if (env.TAG_NAME) {
+            // Split to ensure any suffix is not taken in account (but allow suffix tags to trigger rebuilds)
+            jenkins_version = env.TAG_NAME.split('-')[0]
+            builds['linux'] = {
+                withEnv(["JENKINS_VERSION=${jenkins_version}"]) {
+                    nodeWithTimeout('docker') {
+                        stage('Checkout') {
+                            checkout scm
+                        }
 
-                stage('Publish') {
-                    infra.withDockerCredentials {
-                        sh '''
-                            docker buildx create --use
-                            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-                            make publish
-                            '''
+                        stage('Publish') {
+                            infra.withDockerCredentials {
+                                sh '''
+                                    docker buildx create --use
+                                    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+                                    make publish
+                                    '''
+                            }
+                        }
                     }
                 }
             }
